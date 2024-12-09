@@ -226,6 +226,7 @@ HiddenStates = {}	# indexed by hidden state name
 
 with open(str(MultiArmBanditConfig), 'r') as f:
 	config_info = json.load(f)
+	print(config_info)
 	OperationConfig = config_info['operation']
 	for operation in OperationConfig:
 		assert 'bias' in OperationConfig[operation]
