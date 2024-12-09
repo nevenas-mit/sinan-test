@@ -105,7 +105,7 @@ def setup_swarm(username, worker_nodes, quiet=False):
 		_stdout = subprocess.DEVNULL
 		_stderr = subprocess.DEVNULL
 
-	cmd = 'docker swarm init'
+	cmd = 'docker swarm init --advertise-addr 10.10.1.1'
 	subprocess.run(cmd, shell=True, stdout=_stdout)
 
 	cmd = 'docker swarm join-token worker'
