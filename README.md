@@ -67,6 +67,8 @@ This step is not necessary for HotelReservation, since its deployment is control
 ### Data collection
 Short cut scripts for data collection & deployment can be found in `docker_swarm/scripts`. For example,  within `docker_swarm/scripts`, executing `run_data_collect.sh` will collect training samples of SocialNetwork for concurrent user number from 2 to 48. Generated data are stored in `docker_swarm/logs/collected_data`.
 
+Use: python3 master_data_collect_ath_social.py --user-name nevenas         --stack-name sinan-socialnet         --min-users 4 --max-users 48 --users-step 2         --exp-time 1200 --measure-interval 1 --slave-port 40013 --deploy-config test_cluster.json   --mab-config social_mab.json --deploy
+
 For adapting to your own local cluster, please modify:
 * `--deploy-config` to your own cluster configuration (generated before)
 * `--user-name` Your own username
