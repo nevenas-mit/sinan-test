@@ -165,6 +165,7 @@ def docker_stack_deploy(stack_name, benchmark, benchmark_dir, compose_file, quie
 	time.sleep(5)
 	cmd = 'docker stack deploy --compose-file ' + str(compose_file) \
 	    + ' ' + stack_name
+	print("Cmd = ", cmd)
 	subprocess.run(cmd, shell=True, stdout=_stdout,
 	               stderr=_stderr)
 
