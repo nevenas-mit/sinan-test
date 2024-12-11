@@ -1235,6 +1235,7 @@ def main():
 				converged = docker_stack_deploy(stack_name=Stackname, benchmark=Benchmark,
 					benchmark_dir=BenchmarkDir, compose_file=ComposeFile)	# deploy benchmark
 		users_dir = DataDir / ('users_' + str(users))
+		print("Let's now run the experiment for user ", users)
 		service_fail = run_exp(users=users, log_dir=users_dir)
 		if not service_fail:
 			i += 1
