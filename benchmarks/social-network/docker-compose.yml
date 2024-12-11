@@ -309,7 +309,7 @@ services:
       - write-home-timeline-service
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.62.0
     hostname: jaeger
     ports:
 #      - 5775:5775/udp
