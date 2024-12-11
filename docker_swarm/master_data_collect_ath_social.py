@@ -151,6 +151,7 @@ with open(str(DeployConfig), 'r') as f:
 	ServiceConfig = config_info['service']
 	ScalableServices = config_info['scalable_service']
 	Services = list(ServiceConfig.keys())
+	print("Services = ", Services)
 	for service in Services:
 		assert 'max_replica' in ServiceConfig[service]
 		assert 'max_cpus' in ServiceConfig[service]
