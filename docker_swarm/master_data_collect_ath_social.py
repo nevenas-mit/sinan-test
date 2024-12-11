@@ -141,6 +141,7 @@ ServiceInitConfig = {} # inital configuration of services
 ServiceReplicaStates = {}
 with open(str(DeployConfig), 'r') as f:
 	config_info = json.load(f)
+	print("Config = ", config_info)
 	ReplicaCpus = config_info['replica_cpus']
 	Servers = config_info['nodes']
 	for node in Servers:
