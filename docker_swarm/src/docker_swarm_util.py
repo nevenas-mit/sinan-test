@@ -185,6 +185,7 @@ def docker_stack_deploy(stack_name, benchmark, benchmark_dir, compose_file, quie
 			actual = int(out.split('/')[0])
 			desired = int(out.split('/')[1])
 			print("Actual = ", actual, " desired = ", desired)
+			print("Service name = ", service.name)
 			converged = actual == desired
 			if not converged:
 				break
