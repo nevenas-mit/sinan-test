@@ -1213,7 +1213,7 @@ def main():
 		for server in Servers:
 			if 'label' in Servers[server]:
 				update_node_label(server, Servers[server]['label'])
-		
+	print("Swarm set up")	
 	slave_service_config = {}
 	slave_service_config['services'] = list(Services)
 	slaves = setup_slaves(stack_name=Stackname, username=Username, 
@@ -1223,7 +1223,7 @@ def main():
 	time.sleep(5)
 	# set up connections with slaves and clear data structures
 	connect_slave(servers=Servers, slave_port=SlavePort, slave_socks=SlaveSocks)	
-	
+	print("Slaves connected")
 	# data collection
 	i = 0
 	while i < len(TestUsers):
@@ -1231,9 +1231,11 @@ def main():
 		if Deploy:
 			converged = False
 			while not converged:
+				print("Deploy benchmark")
 				docker_stack_rm(stack_name=Stackname)
 				converged = docker_stack_deploy(stack_name=Stackname, benchmark=Benchmark,
 					benchmark_dir=BenchmarkDir, compose_file=ComposeFile)	# deploy benchmark
+				print("Converged = ", converged)
 		users_dir = DataDir / ('users_' + str(users))
 		print("Let's now run the experiment for user ", users)
 		service_fail = run_exp(users=users, log_dir=users_dir)
