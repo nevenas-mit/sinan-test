@@ -113,6 +113,12 @@ for node in nodes:
     elif node == 'node1.nevenas-236179.hwswcodesign-pg0.utah.cloudlab.us':
         node_config[node]['cpus'] = 16
         node_config[node]['label'] = 'type=data'
+    elif node == "node-0.urja.ragger-pg0.wisc.cloudlab.us":
+        node_config[node]['cpus'] = 40
+        node_config[node]['label'] = 'type=compute'
+    elif node == "node-1.urja.ragger-pg0.wisc.cloudlab.us":
+        node_config[node]['cpus'] = 40
+        node_config[node]['label'] = 'type=data'
     else:
         node_config[node]['cpus'] = 16
         node_config[node]['label'] = 'type=data'
