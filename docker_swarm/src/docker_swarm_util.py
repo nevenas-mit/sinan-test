@@ -201,8 +201,10 @@ def docker_stack_deploy(stack_name, benchmark, benchmark_dir, compose_file, quie
 	if 'social' in benchmark:
 		cmd = 'python3 ' + str(benchmark_dir / 'scripts' / 'setup_social_graph_init_data_sync.py') + \
 		 	' ' + str(benchmark_dir / 'datasets' / 'social-graph' / 'socfb-Reed98' / 'socfb-Reed98.mtx')
+		print(cmd)
 		subprocess.call(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr, preexec_fn=os.setsid,bufsize=-1)
-		# print 'setup_social_graph_init_data.py out: ', out
+		# print 'setup_social_
+		# graph_init_data.py out: ', out
 		logging.info('social network set up done')
 		time.sleep(30)
 	
