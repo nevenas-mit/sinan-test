@@ -646,14 +646,17 @@ def main():
 	host_sock, addr = local_serv_sock.accept()
 	host_sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
+	print("Init slave part")
+
 	MsgBuffer = ''
 	terminate = False
 	while True:
+		print("Wait for new messages")
 		data = host_sock.recv(1024).decode('utf-8')
 		if len(data) == 0:
 			logging.warning('connection reset by host, exiting...')
 			break
-
+		print("Received data = ", data)
 		MsgBuffer += data
 		while '\n' in MsgBuffer:
 			(cmd, rest) = MsgBuffer.split('\n', 1)
@@ -661,6 +664,7 @@ def main():
 			logging.info('cmd = ' + cmd)
 
 			if 'init_data' in cmd:
+				print("Here is the init data command")
 				init_data()
 				host_sock.sendall(('init_data_done\n').encode('utf-8'))
 			elif 'exp_start' in cmd:
