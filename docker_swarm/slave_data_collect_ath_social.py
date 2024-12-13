@@ -449,7 +449,7 @@ def get_io_usage():
 	for container in ContainerList:	
 		# io sectors (512 bytes)
 		# pseudo_file = '/sys/fs/cgroup/blkio/docker/' + str(ContainerIds[container])  + '/blkio.sectors_recursive'
-		pseudo_file = Path('/sys') / 'fs' / 'cgroup' / 'blkio' / 'docker' / ContainerStats[container]['id']  / 'blkio.throttle.io_service_bytes'
+		pseudo_file = Path('/sys') / 'fs' / 'cgroup' / 'blkio' / 'docker' / ContainerStats[container]['id']  / 'blkio.sectors_recursive'
 		with open(str(pseudo_file), 'r') as f:
 			lines = f.readlines()
 			if len(lines) > 0:
@@ -465,7 +465,7 @@ def get_io_usage():
 
 		# io services
 		# pseudo_file = '/sys/fs/cgroup/blkio/docker/' + str(ContainerIds[container])  + '/blkio.io_serviced_recursive'
-		pseudo_file = Path('/sys') / 'fs' / 'cgroup' / 'blkio' / 'docker' / ContainerStats[container]['id'] / 'blkio.throttle.io_serviced_recursive'
+		pseudo_file = Path('/sys') / 'fs' / 'cgroup' / 'blkio' / 'docker' / ContainerStats[container]['id'] / 'blkio.throttle.io_service_bytes'
 		with open(str(pseudo_file), 'r') as f:
 			lines = f.readlines()
 			for line in lines:
