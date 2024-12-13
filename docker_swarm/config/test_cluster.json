@@ -1,11 +1,11 @@
 {
     "nodes": {
-        "node0.nevenas-236179.hwswcodesign-pg0.utah.cloudlab.us": {
+        "node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us": {
             "cpus": 16,
             "ip_addr": "10.10.1.1",
             "label": "type=compute"
         },
-        "node1.nevenas-236179.hwswcodesign-pg0.utah.cloudlab.us": {
+        "node1.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us": {
             "cpus": 16,
             "ip_addr": "10.10.1.2",
             "label": "type=data"

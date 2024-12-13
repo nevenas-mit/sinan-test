@@ -38,8 +38,8 @@ replica_cpus = args.replica_cpus
 # cpu_percent = args.cpu_percent
 
 IP_ADDR = {}
-IP_ADDR["node0.nevenas-236179.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.1"
-IP_ADDR["node1.nevenas-236179.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.2"
+IP_ADDR["node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.1"
+IP_ADDR["node1.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.2"
 IP_ADDR["node-0.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.1"
 IP_ADDR["node-1.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.2"
 
@@ -107,10 +107,10 @@ for node in nodes:
     assert node in IP_ADDR
     node_config[node] = {}
     node_config[node]['ip_addr'] = IP_ADDR[node]
-    if node == 'node0.nevenas-236179.hwswcodesign-pg0.utah.cloudlab.us':
+    if node == 'node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us':
         node_config[node]['cpus'] = 16
         node_config[node]['label'] = 'type=compute'
-    elif node == 'node1.nevenas-236179.hwswcodesign-pg0.utah.cloudlab.us':
+    elif node == 'node1.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us':
         node_config[node]['cpus'] = 16
         node_config[node]['label'] = 'type=data'
     elif node == "node-0.urja.ragger-pg0.wisc.cloudlab.us":
