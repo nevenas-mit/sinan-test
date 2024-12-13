@@ -1016,10 +1016,14 @@ def run_exp(users, log_dir):
 	# states_path 	= log_dir / 'states.txt'
 	logging.info('\nTest users: ' + str(users))
 
+	print("Start with the experiment")
+
 	# scale to init config
 	do_docker_scale_init()
 	send_exp_start(servers=Servers, slave_socks=SlaveSocks)
 	inform_slaves_new_replica()
+
+	print("Scale init done")
 
 	# start wrk2
 	logging.info("start locust")
@@ -1031,11 +1035,15 @@ def run_exp(users, log_dir):
 		servers=Servers, slave_socks=SlaveSocks)
 	time.sleep(5)
 
+	print("Start wrk2 done")
+
 	locust_p = run_locust(
 		client_script=LocustScript, csv=LocustCsv, 
 		nginx_ip='http://127.0.0.1:8080', volumes=LocustVolumes,
 		log_file=LocustLog, duration=ExpTime + 120,
 		users=users, quiet=True)
+
+	print("Run locust done")
 
 	assert(locust_p != None)
 
