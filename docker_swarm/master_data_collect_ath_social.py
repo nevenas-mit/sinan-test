@@ -1082,7 +1082,8 @@ def run_exp(users, log_dir):
 			for s in Services:
 				feature.cpu_limit[s] = ServiceConfig[s]['cpus']
 				feature.replica_cpu_limit[s] = ServiceConfig[s]['replica_cpus']
-
+			print("Get locust data ")
+			input()
 			tail, rps, failures = get_locust_data(feature=feature, log_path=str(LocustStats))
 			success = get_metric(feature=feature)
 			if not success:
