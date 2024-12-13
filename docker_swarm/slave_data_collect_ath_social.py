@@ -482,13 +482,19 @@ def init_data():
 	global Services
 	global ServiceConfig
 	# reset container id pid every time, since we can't control placement with docker swarm
+	print("Start init data")
 	reset_container_id_pids()
-
+	print("Reset container id pids")
+	
 	# read initial values
 	get_docker_cpu_usage()
+	print("Get cpu usage")
 	get_memory_usage()
+	print("Get mem usage")
 	get_network_usage()
+	print("Get network usage")
 	get_io_usage()
+	print("Get io usage")
 
 # cpu cycle limit
 def set_cpu_limit(cpu_config, quiet=False):
