@@ -103,12 +103,16 @@ def send_terminate_slave(servers, slave_socks):
 
 def send_server_init_data(server, sock):
 	cmd = 'init_data\n'
+	print("Send init data command")
 	sock.sendall(cmd.encode('utf-8'))
+	print("Done sending init data command")
 
 	msg = ''
 	init_data_done = False
 	while True:
+		print("Receive message from init data")
 		data = sock.recv(1024).decode('utf-8')
+		print("Current msg = ", msg)
 		msg += data
 		while '\n' in msg:
 			(cmd, rest) = msg.split('\n', 1)
