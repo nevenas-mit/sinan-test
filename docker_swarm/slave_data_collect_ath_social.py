@@ -133,7 +133,6 @@ def docker_ps():
 		print("Stats created")
 		update_container_pids(c_name)
 		print("Updated pids!")
-		input()
 
 def get_container_id(container_name):
 	cmd = "docker inspect --format=\"{{.Id}}\" " + container_name
