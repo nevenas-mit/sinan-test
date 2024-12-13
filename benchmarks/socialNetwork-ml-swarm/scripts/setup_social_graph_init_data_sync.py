@@ -122,7 +122,8 @@ charset = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's',
 
 #----------------- media data -----------------#
 benchmark_dir = "/home/yz2297/Software/deathstar_suite/socialNetwork-ml-swarm/DeathStarBench/socialNetwork-ml-swarm"
-media_dir = benchmark_dir + "/wrk2/scripts/social-network/images/"
+# media_dir = "../wrk2/scripts/social-network/images/"
+media_dir = "../benchmarks/socialNetwork-ml-swarm/wrk2/scripts/social-network/images/"
 media_jpg = {}
 media_jpg_num = 17
 media_png  = {}
