@@ -97,7 +97,9 @@ def create_container_stats(service, container_name, container_id):
 def reset_container_id_pids():
 	logging.info('reset_container_id_pids')
 	clear_container_stats()
+	print("Done with clearing container stats")
 	docker_ps()
+	print("Done with docker ps")
 
 def docker_ps():
 	global Services
@@ -125,8 +127,11 @@ def docker_ps():
 			continue
 
 		logging.info("docker ps container_name = %s, container_id = %s service = %s" %(c_name, c_id, service))
+		print("Now create container stats for service ", service)
 		create_container_stats(service, c_name, c_id)
+		print("Stats created")
 		update_container_pids(c_name)
+		print("Updated pids!")
 
 def get_container_id(container_name):
 	cmd = "docker inspect --format=\"{{.Id}}\" " + container_name
@@ -138,8 +143,10 @@ def update_container_pids(container_name):
 	global ContainerStats
 	assert container_name in ContainerStats
 	cmd = "docker inspect -f \"{{ .State.Pid }}\" " + ContainerStats[container_name]['id']
+	print("Cmd to update pids = ", cmd)
 	pid_strs = subprocess.check_output(cmd, shell=True, stderr=sys.stderr).decode(
 		'utf-8').split('\n')
+	print(pid_strs)
 	for pid_str in pid_strs:
 		if pid_str != '':
 			ContainerStats[container_name]['pids'].append(pid_str)
