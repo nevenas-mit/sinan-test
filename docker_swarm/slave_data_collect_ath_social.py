@@ -107,6 +107,7 @@ def docker_ps():
 
 	texts = subprocess.check_output('docker ps', shell=True, stderr=sys.stderr).decode(
 			'utf-8').splitlines()
+	print("Len text = ", len(texts))
 	for i in range(1, len(texts)):
 		c_name = [s for s in texts[i].split(' ') if s][-1]
 		if Stackname not in c_name:
@@ -132,6 +133,7 @@ def docker_ps():
 		print("Stats created")
 		update_container_pids(c_name)
 		print("Updated pids!")
+		input()
 
 def get_container_id(container_name):
 	cmd = "docker inspect --format=\"{{.Id}}\" " + container_name
