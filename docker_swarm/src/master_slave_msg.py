@@ -54,7 +54,7 @@ def setup_slaves(stack_name, username, servers,
 			service_config_path=config_path,
 			quiet=quiet)
 		p_list.append(p)
-		print("Slave = ", p)
+		print("Slave = ", p.pid)
 	return p_list
 
 def connect_slave(servers, slave_port, slave_socks):
