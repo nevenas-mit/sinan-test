@@ -666,7 +666,9 @@ def main():
 			if 'init_data' in cmd:
 				print("Here is the init data command")
 				init_data()
+				print("Data init done")
 				host_sock.sendall(('init_data_done\n').encode('utf-8'))
+				print("Response sent")
 			elif 'exp_start' in cmd:
 				assert '\n' not in rest
 				# docker_restart = (int(cmd.split(' ')[2]) == 1)
