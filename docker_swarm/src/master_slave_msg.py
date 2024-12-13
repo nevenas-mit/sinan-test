@@ -11,7 +11,6 @@ from util import *
 
 def setup_server_slave(stack_name, username, server, server_cpus, slave_port, 
 		slave_script_dir, service_config_path, quiet):
-	return 0
 	cwd = str(Path.cwd())
 
 	# scp to remote nodes
