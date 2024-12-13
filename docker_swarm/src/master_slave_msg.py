@@ -123,6 +123,7 @@ def send_server_init_data(server, sock):
 # send init_data request to all slaves
 def send_init_data(servers, slave_socks):
 	t_list = []
+	print("Send data to = ", servers)
 	for server in servers:
 		t = threading.Thread(target=send_server_init_data, kwargs={
 			'server': server,
