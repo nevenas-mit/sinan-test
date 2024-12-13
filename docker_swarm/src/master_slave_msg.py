@@ -26,7 +26,7 @@ def setup_server_slave(stack_name, username, server, server_cpus, slave_port,
 				' --server-port ' + str(slave_port) + \
 				' --service-config ' + str(service_config_path)
 	p = ssh(username=username, host=server, cmd=slave_cmd, quiet=quiet)
-	print("Cmd = ", cmd)
+	print("Cmd = ", slave_cmd)
 	return p
 	# cmd = 'ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' + \
 	# 	Username + '@' + server + ' \"' + slave_cmd + '\"'
