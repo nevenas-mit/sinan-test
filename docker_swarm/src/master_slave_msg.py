@@ -43,6 +43,7 @@ def setup_slaves(stack_name, username, servers,
 	for server in servers:
 		# ip_addr = servers[server]['ip_addr']
 		server_cpus = servers[server]['cpus']
+		print("Setup server slave ", server)
 		p = setup_server_slave(
 			stack_name=stack_name,
 			username=username, 
@@ -53,6 +54,7 @@ def setup_slaves(stack_name, username, servers,
 			service_config_path=config_path,
 			quiet=quiet)
 		p_list.append(p)
+		print("Slave = ", p)
 	return p_list
 
 def connect_slave(servers, slave_port, slave_socks):
