@@ -83,6 +83,23 @@ GPU is required for model training. The following steps assume you are in `ml_do
 #### SocialNetwork
 * Execute `python3 data_parser_socialml_next_k.py --log-dir LOGDIR --save-dir DATADIR` to format the training dataset. `LOGDIR` is the directory of the raw training set (`ocker_swarm/logs/collected_data`), and `DATADIR` points to the path to save the formatted training samples. Please record the first dimension of output `glob_sys_data_train.shape`, which is your training data set size and you will need it later.
 
+* sys_data.shape = 
+(1190, 6, 28, 5)
+lat_data.shape = 
+(1190, 5, 5)
+next_k_info.shape = 
+(1190, 28, 5)
+lat_next_k_label.shape = 
+(1190, 5, 5)
+glob_sys_data_train.shape = 
+(23661, 6, 28, 5)
+glob_lat_data_train.shape = 
+(23661, 5, 5)
+glob_next_k_info_train.shape = 
+(23661, 28, 5)
+glob_lat_next_k_label_train.shape = 
+(23661, 5, 5)
+
 * Execute `python train_cnvnet.py --num-examples NUMSAMPLES --lr 0.001 --gpus 0,1 --data-dir DATADIR --wd 0.001` to train the CNN. `NUMSAMPLES` is your training dataset size. If you only have 1 gpu, please change to `--gpus 0`. Generated models are saved in `ml_docker_swarm/model`. You can also read the accuracy from the output log, whose name is `test_single_qps_upsample` by default.
 
 * Execute `python xgb_train_latent.py --gpus 0,1 --data-dir DATADIR` to train the XGBoost model. Generated models are saved in `ml_docker_swarm/xgb_model`.
