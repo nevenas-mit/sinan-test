@@ -12,35 +12,35 @@ import os
 import argparse
 import math
 
-Services   = ['compose-post-redis',
-              'compose-post-service',
-              'home-timeline-redis',
-              'home-timeline-service',
-              # 'jaeger',
-              'nginx-thrift',
-              'post-storage-memcached',
-              'post-storage-mongodb',
-              'post-storage-service',
-              'social-graph-mongodb',
-              'social-graph-redis',
-              'social-graph-service',
-              'text-service',
-              'text-filter-service',
-              'unique-id-service',
-              'url-shorten-service',
-              'media-service',
-              'media-filter-service',
-              'user-mention-service',
-              'user-memcached',
-              'user-mongodb',
-              'user-service',
-              'user-timeline-mongodb',
-              'user-timeline-redis',
-              'user-timeline-service',
-              'write-home-timeline-service',
-              'write-home-timeline-rabbitmq',
-              'write-user-timeline-service',
-              'write-user-timeline-rabbitmq']
+Services = ['compose-post-redis',
+            'compose-post-service',
+            'home-timeline-redis',
+            'home-timeline-service',
+            # 'jaeger',
+            'nginx-thrift',
+            'post-storage-memcached',
+            'post-storage-mongodb',
+            'post-storage-service',
+            'social-graph-mongodb',
+            'social-graph-redis',
+            'social-graph-service',
+            'text-service',
+            'text-filter-service',
+            'unique-id-service',
+            'url-shorten-service',
+            'media-service',
+            'media-filter-service',
+            'user-mention-service',
+            'user-memcached',
+            'user-mongodb',
+            'user-service',
+            'user-timeline-mongodb',
+            'user-timeline-redis',
+            'user-timeline-service',
+            'write-home-timeline-service',
+            'write-home-timeline-rabbitmq',
+            'write-user-timeline-service',
+            'write-user-timeline-rabbitmq']
 
 def _load_model(args, rank=0):
     if 'load_epoch' not in args or args.load_epoch is None:
@@ -83,11 +83,11 @@ def main():
     sym_sys_state = all_layers['full_feature_output']
     # sym_sys_state = all_layers['fc3_relu_output']
     
-    model_sys_state   = mx.mod.Module(
-            context = devs,
-            symbol = sym_sys_state,
+    model_sys_state = mx.mod.Module(
+            context=devs,
+            symbol=sym_sys_state,
             # symbol = sym,
-            data_names = ('data1','data2', 'data3')
+            data_names=('data1', 'data2', 'data3')
             # label_names = ('label',)
             )
 
@@ -97,10 +97,10 @@ def main():
 
     batch_size = args.batch_size
     model_sys_state.bind(for_training=False, 
-        data_shapes=[('data1', (batch_size,6,len(Services),TimeSteps)), 
-                     ('data2', (batch_size,5,TimeSteps)), 
-                     # ('data3', (batch_size,2,len(Services)))
-                     ('data3', (batch_size,len(Services))) ])
+        data_shapes=[('data1', (batch_size, 6, len(Services), TimeSteps)), 
+                     ('data2', (batch_size, 5, TimeSteps)), 
+                     # ('data3', (batch_size, 2, len(Services)))
+                     ('data3', (batch_size, len(Services)))])
     model_sys_state.set_params(load_params[1], load_params[2], allow_missing=True, allow_extra=True)
 
     #--------- data shape for look_forward = 6, which is the last dimension in next_k_lbl ---------#
@@ -130,8 +130,8 @@ def main():
     label_t = np.load(data_dir + '/nxt_k_train_label.npy')
     label_t = np.squeeze(label_t[:, :, 0])  # only keep immediate future
 
-    train_data  = {'data1':sys_data_t, 'data2':lat_data_t, 'data3':nxt_data_t} #, 'data4':original_label_t}
-    train_label = {'label':label_t}
+    train_data = {'data1': sys_data_t, 'data2': lat_data_t, 'data3': nxt_data_t} #, 'data4':original_label_t}
+    train_label = {'label': label_t}
 
     # do not shuffle since we need data to be in order
     train_iter = mx.io.NDArrayIter(train_data, train_label, batch_size=args.batch_size)
@@ -144,9 +144,9 @@ def main():
     # print label_nxt_t.shape
     label_nxt_t = np.greater_equal(label_nxt_t, QoS)
     # +1 viol, (+1 sat, +2 viol), (+1 sat, +2 sat, +3 viol)
-    print "violations: ", np.sum(label_nxt_t[:, 0]), 
-    print np.sum(np.logical_not(label_nxt_t[:,0])*label_nxt_t[:, 1]), 
-    print np.sum(np.logical_not(label_nxt_t[:,0]) * np.logical_not(label_nxt_t[:,1]) * label_nxt_t[:, 2])
+    print("violations: ", np.sum(label_nxt_t[:, 0]), 
+          np.sum(np.logical_not(label_nxt_t[:, 0]) * label_nxt_t[:, 1]), 
+          np.sum(np.logical_not(label_nxt_t[:, 0]) * np.logical_not(label_nxt_t[:, 1]) * label_nxt_t[:, 2]))
     
     n_v_v = 0
     n_s_v = 0
@@ -167,31 +167,31 @@ def main():
             else:
                 n_s_s += 1
 
-    print 'train n_v_v = ', n_v_v
-    print 'train n_s_v = ', n_s_v
-    print 'train n_s_s = ', n_s_s
-    print 'train n_v_v = ', n_v_v
+    print('train n_v_v = ', n_v_v)
+    print('train n_s_v = ', n_s_v)
+    print('train n_s_s = ', n_s_s)
+    print('train n_v_v = ', n_v_v)
     # return
 
     # print label_nxt_t.shape
     if look_forward > 1:
-        label_nxt_t = np.sum(label_nxt_t, axis = 1)
+        label_nxt_t = np.sum(label_nxt_t, axis=1)
     # print label_nxt_t.shape
     final_label_t = np.greater_equal(label_nxt_t, 1)
 
     # label_nxt_t = np.squeeze(label_nxt_t[:, :, 0])[:, -1]
     # final_label_t = np.where(label_nxt_t < QoS, 0, 1)
 
-    print 'internal_rep_train.shape = ', internal_rep_train.shape
-    print 'nxt_k_data_t.shape = ', nxt_k_data_t.shape
+    print('internal_rep_train.shape = ', internal_rep_train.shape)
+    print('nxt_k_data_t.shape = ', nxt_k_data_t.shape)
 
     # lat_info_t = np.squeeze(lat_data_t[:, 4, :, :])
     X_train = np.concatenate((internal_rep_train, nxt_k_data_t), axis=1)
     #X_train = np.concatenate((lat_info_t, nxt_k_data_t), axis=1)
-    print 'X_train.shape = ', X_train.shape
+    print('X_train.shape = ', X_train.shape)
     # print X_train[0, :]
     y_train = final_label_t
-    print 'y_train.shape = ', y_train.shape
+    print('y_train.shape = ', y_train.shape)
 
     #-------------------------- validation data ----------------------------#
     sys_data_v = np.load(data_dir + '/sys_data_valid.npy')
@@ -211,8 +211,8 @@ def main():
     label_v = np.load(data_dir + '/nxt_k_valid_label.npy')
     label_v = np.squeeze(label_v[:, :, 0])  # only keep immediate future
 
-    valid_data  = {'data1':sys_data_v, 'data2':lat_data_v, 'data3':nxt_data_v} #, 'data4':original_label_v}
-    valid_label = {'label':label_v}
+    valid_data = {'data1': sys_data_v, 'data2': lat_data_v, 'data3': nxt_data_v} #, 'data4':original_label_v}
+    valid_label = {'label': label_v}
     # do not shuffle since we need data to be in order
     valid_iter = mx.io.NDArrayIter(valid_data, valid_label, batch_size=args.batch_size)
     internal_rep_valid = model_sys_state.predict(valid_iter).asnumpy()
@@ -223,7 +223,7 @@ def main():
     label_nxt_v = np.greater_equal(label_nxt_v, QoS)
 
     if look_forward > 1:
-        label_nxt_v = np.sum(label_nxt_v, axis = 1)
+        label_nxt_v = np.sum(label_nxt_v, axis=1)
     final_label_v = np.greater_equal(label_nxt_v, 1)
 
     # label_nxt_v = np.load('./data_+1s/valid_nxt_label.npy')
@@ -234,10 +234,10 @@ def main():
     # lat_info_v = np.squeeze(lat_data_v[:, 4, :, :])
     X_test = np.concatenate((internal_rep_valid, nxt_k_data_v), axis=1)
     #X_test = np.concatenate((lat_info_v, nxt_k_data_v), axis=1)
-    print 'X_test.shape = ', X_test.shape
+    print('X_test.shape = ', X_test.shape)
     # print X_test[0, :]
     y_test = final_label_v
-    print 'y_test.shape = ', y_test.shape
+    print('y_test.shape = ', y_test.shape)
 
     # # upsampling
     # viol_idx_test = []
@@ -265,7 +265,6 @@ def main():
     # shuffle_in_unison([X_test, y_test])
 
     #-------------------------- model ----------------------------#
-    
 
     # print X_train.shape, X_test.shape, y_train.shape, y_test.shape
     # encode string class values as integers
@@ -274,19 +273,19 @@ def main():
     dtrain = xgb.DMatrix(X_train, label=y_train)
     dtest = xgb.DMatrix(X_test, label=y_test)
 
-    progress = dict() # Store accuracy result
-    watchlist = [(dtrain,'train-err'),(dtest,'eval-err')]
+    progress = dict()  # Store accuracy result
+    watchlist = [(dtrain, 'train-err'), (dtest, 'eval-err')]
     tmp = time.time()
     # Train model
-    params={'objective': 'binary:logistic',
-            'booster': 'gbtree', 
-            'eval_metric': 'error',
-            'feature_selector': 'greedy',
-            'eta': 0.01,
-            'max_depth': 6,
-            'tree_method': 'gpu_exact', # 'gpu_exact',
-            'gamma': 0.0,
-            'grow_policy': 'lossguide'}
+    params = {'objective': 'binary:logistic',
+              'booster': 'gbtree', 
+              'eval_metric': 'error',
+              'feature_selector': 'greedy',
+              'eta': 0.01,
+              'max_depth': 6,
+              'tree_method': 'gpu_exact',  # 'gpu_exact',
+              'gamma': 0.0,
+              'grow_policy': 'lossguide'}
 
     bst = xgb.train(params, dtrain, num_boost_round=2000, evals=watchlist, evals_result=progress, early_stopping_rounds=50)
     print("GPU Training Time: %s seconds" % (str(time.time() - tmp)))
@@ -295,15 +294,15 @@ def main():
     print('0.1 threshold')
     ypred = bst.predict(dtest)
     binary_ypred = np.greater(ypred, 0.1 * np.ones_like(ypred))
-    print np.sum(binary_ypred) * 1.0 / binary_ypred.shape[0], np.sum(y_test) * 1.0 / y_test.shape[0]
-    print 'false postive = ', np.sum(np.logical_not(y_test) * binary_ypred) * 1.0 / y_test.shape[0]
-    print 'false negative = ', np.sum(np.logical_not(binary_ypred) * y_test) * 1.0 / y_test.shape[0]
+    print(np.sum(binary_ypred) * 1.0 / binary_ypred.shape[0], np.sum(y_test) * 1.0 / y_test.shape[0])
+    print('false postive = ', np.sum(np.logical_not(y_test) * binary_ypred) * 1.0 / y_test.shape[0])
+    print('false negative = ', np.sum(np.logical_not(binary_ypred) * y_test) * 1.0 / y_test.shape[0])
 
     print('0.25 threshold')
     binary_ypred = np.greater(ypred, 0.25 * np.ones_like(ypred))
-    print np.sum(binary_ypred) * 1.0 / binary_ypred.shape[0], np.sum(y_test) * 1.0 / y_test.shape[0]
-    print 'false postive = ', np.sum(np.logical_not(y_test) * binary_ypred) * 1.0 / y_test.shape[0]
-    print 'false negative = ', np.sum(np.logical_not(binary_ypred) * y_test) * 1.0 / y_test.shape[0]
+    print(np.sum(binary_ypred) * 1.0 / binary_ypred.shape[0], np.sum(y_test) * 1.0 / y_test.shape[0])
+    print('false postive = ', np.sum(np.logical_not(y_test) * binary_ypred) * 1.0 / y_test.shape[0])
+    print('false negative = ', np.sum(np.logical_not(binary_ypred) * y_test) * 1.0 / y_test.shape[0])
 
     if not os.path.isdir('./xgb_model/'):
         os.mkdir('./xgb_model/')
