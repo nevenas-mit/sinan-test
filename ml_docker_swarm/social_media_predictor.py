@@ -207,9 +207,12 @@ def _predict(info, uncertainty_threshold=0.1):
     dpred = xgb.DMatrix(xgb_input)
     xgb_predict = BoostTree.predict(dpred)
 
+    uncertainty_std = np.std(xgb_predict) / (np.sqrt(batch_size) + 1e-8)
+    uncertainty_entropy = -np.sum(xgb_predict * np.log(xgb_predict + 1e-8)) / batch_size
+    uncertainty_variance = np.var(xgb_predict)
+
+    uncertainty = max(uncertainty_std, uncertainty_entropy, uncertainty_variance)
     predict = []
-    uncertainty = np.std(xgb_predict) / (np.sqrt(batch_size) + 1e-8)
-    
     for i in range(batch_size):
         if uncertainty > uncertainty_threshold:
             predict.append([-1, -1])
