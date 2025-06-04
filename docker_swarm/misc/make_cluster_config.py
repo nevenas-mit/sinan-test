@@ -128,16 +128,16 @@ for node in nodes:
         node_config[node]['cpus'] = 40
         node_config[node]['label'] = 'type=data'
     elif node == "node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us":
-        node_config[node]['cpus'] = 16
+        node_config[node]['cpus'] = 32
         node_config[node]['label'] = 'type=compute'
     elif node == "node1.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us":
-        node_config[node]['cpus'] = 16
+        node_config[node]['cpus'] = 32
         node_config[node]['label'] = 'type=compute'
     elif node == "node2.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us":
-        node_config[node]['cpus'] = 16
+        node_config[node]['cpus'] = 32
         node_config[node]['label'] = 'type=compute'
     else:
-        node_config[node]['cpus'] = 16
+        node_config[node]['cpus'] = 32
         node_config[node]['label'] = 'type=data'
 
 cluster_config = {}
