@@ -572,15 +572,17 @@ def start_experiment(host_sock):
 
     exp_succ = True
     while True:
+        print("Wait for the data")
         data = host_sock.recv(1024).decode('utf-8')
         # print 'recv: ', data
         MsgBuffer += data
 
         if len(data) == 0:
             print("Host_sock reset during experiment")
-            logging.error('host_sock reset during experiment')
-            terminate = True
-            exp_succ = False
+            # logging.error('host_sock reset during experiment')
+            continue
+            # terminate = True
+            # exp_succ = False
 
         while '\n' in MsgBuffer:
             (cmd, rest) = MsgBuffer.split('\n', 1)
