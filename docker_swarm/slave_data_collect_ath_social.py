@@ -580,9 +580,9 @@ def start_experiment(host_sock):
         if len(data) == 0:
             print("Host_sock reset during experiment")
             # logging.error('host_sock reset during experiment')
-            continue
-            # terminate = True
-            # exp_succ = False
+            # continue
+            terminate = True
+            exp_succ = False
 
         while '\n' in MsgBuffer:
             (cmd, rest) = MsgBuffer.split('\n', 1)
