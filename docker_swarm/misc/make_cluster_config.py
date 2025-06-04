@@ -38,10 +38,18 @@ replica_cpus = args.replica_cpus
 # cpu_percent = args.cpu_percent
 
 IP_ADDR = {}
-IP_ADDR["node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.1"
-IP_ADDR["node1.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.2"
-IP_ADDR["node-0.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.1"
-IP_ADDR["node-1.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.2"
+# IP_ADDR["node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.1"
+# IP_ADDR["node1.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us"]     = "10.10.1.2"
+# IP_ADDR["node-0.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.1"
+# IP_ADDR["node-1.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.2"
+
+IP_ADDR["node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.1"
+IP_ADDR["node1.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.2"
+IP_ADDR["node2.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.3"
+IP_ADDR["node3.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.4"
+IP_ADDR["node4.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.5"
+IP_ADDR["node5.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.6"
+IP_ADDR["node6.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.7"
 
 service_config = {
     "nginx-thrift":         {'max_replica': 4},
@@ -119,6 +127,15 @@ for node in nodes:
     elif node == "node-1.urja.ragger-pg0.wisc.cloudlab.us":
         node_config[node]['cpus'] = 40
         node_config[node]['label'] = 'type=data'
+    elif node == "node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us":
+        node_config[node]['cpus'] = 16
+        node_config[node]['label'] = 'type=compute'
+    elif node == "node1.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us":
+        node_config[node]['cpus'] = 16
+        node_config[node]['label'] = 'type=compute'
+    elif node == "node2.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us":
+        node_config[node]['cpus'] = 16
+        node_config[node]['label'] = 'type=compute'
     else:
         node_config[node]['cpus'] = 16
         node_config[node]['label'] = 'type=data'
