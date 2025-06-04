@@ -61,7 +61,7 @@ service_config = {
     "user-memcached":       {'max_replica': 1},
     "user-mongodb":         {'max_replica': 1},
     "media-service":        {'max_replica': 4, 'max_cpus': 4},
-    "media-filter-service": {'max_replica': 16, 'max_cpus': 128},
+    "media-filter-service": {'max_replica': 8, 'max_cpus': 32},
     "unique-id-service":    {'max_replica': 1},
     "url-shorten-service":  {'max_replica': 1},
     "user-mention-service": {'max_replica': 1},

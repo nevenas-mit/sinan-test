@@ -82,10 +82,10 @@
             "replica": 4
         },
         "media-filter-service": {
-            "cpus": 128,
-            "max_cpus": 128,
-            "max_replica": 16,
-            "replica": 16
+            "cpus": 32,
+            "max_cpus": 32,
+            "max_replica": 8,
+            "replica": 8
         },
         "media-service": {
             "cpus": 4,
