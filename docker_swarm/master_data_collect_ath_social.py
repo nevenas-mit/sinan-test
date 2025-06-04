@@ -1049,6 +1049,7 @@ def run_exp(users, log_dir):
 
 	time.sleep(120)	# wait for latencys to become stable
 
+        print("Done with sleep")
 	StartTime = time.time()
 	# start adjusting rsc
 	prev_time = StartTime
@@ -1061,17 +1062,25 @@ def run_exp(users, log_dir):
 	service_fail = False
 	in_recovery = False
 	in_hold = False
+
+        print("Set all vars")
+
 	reset_docker_scale_clock()
+
+        print("Reset docker scale clock")
 	while time.time() - StartTime < ExpTime:
 		cur_time = time.time()
 		if cur_time - StartTime < MeasureInterval*interval_idx:
 			time.sleep(MeasureInterval*interval_idx - (cur_time - StartTime))
 			continue
 		else:
+                        print("Current interval idx = ", interval_idx)
 			logging.info('current interval_idx: ' + str(interval_idx) + ', cur_time = ' + format(cur_time - StartTime, '.1f'))
 			interval_idx = int((cur_time - StartTime)/MeasureInterval) + 1
 			inform_slaves_new_replica()
-			# prev_time  = cur_time
+			
+                        print("Informed slaves of a new replica")
+                        # prev_time  = cur_time
 			timestamp = round(cur_time - StartTime, 1)
 			cur_state = State()
 
