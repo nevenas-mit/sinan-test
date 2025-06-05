@@ -81,7 +81,7 @@ Similarly, `run_data_collect_hotel.sh` collects data for HotelReservation, and m
 GPU is required for model training. The following steps assume you are in `ml_docker_swarm`. We also provide models trained on our own cluster, saved in `ml_docker_swarm/xgb_model` and `ml_docker_swarm/model`.
 
 #### SocialNetwork
-* Execute `python3 data_parser_socialml_next_k.py --log-dir LOGDIR --save-dir DATADIR` to format the training dataset. `LOGDIR` is the directory of the raw training set (`ocker_swarm/logs/collected_data`), and `DATADIR` points to the path to save the formatted training samples. Please record the first dimension of output `glob_sys_data_train.shape`, which is your training data set size and you will need it later.
+* Execute `python3 data_parser_socialml_next_k.py --log-dir LOGDIR --save-dir DATADIR` to format the training dataset. `LOGDIR` is the directory of the raw training set (`docker_swarm/logs/collected_data`), and `DATADIR` points to the path to save the formatted training samples. Please record the first dimension of output `glob_sys_data_train.shape`, which is your training data set size and you will need it later.
 
 * sys_data.shape = 
 (1190, 6, 28, 5)
