@@ -1,8 +1,36 @@
-[2024-12-13 11:24:08,032] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.main: Run time limit set to 240 seconds
-[2024-12-13 11:24:08,032] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.main: Starting Locust 1.0.2
-[2024-12-13 11:24:08,033] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.runners: Hatching and swarming 8 users at the rate 1 users/s (0 users already running)...
-[2024-12-13 11:24:15,044] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.runners: All users hatched: SocialMediaUser: 8 (0 already running)
-[2024-12-13 11:28:07,472] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.main: Time limit reached. Stopping Locust.
-[2024-12-13 11:28:07,473] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.main: Shutting down (exit code 0), bye.
-[2024-12-13 11:28:07,474] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.main: Cleaning up runner...
-[2024-12-13 11:28:07,474] node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us/INFO/locust.main: Running teardowns...
+[2025-06-05 00:18:24,973] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.main: Run time limit set to 1320 seconds
+[2025-06-05 00:18:24,973] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.main: Starting Locust 1.0.2
+[2025-06-05 00:18:24,974] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.runners: Hatching and swarming 8 users at the rate 1 users/s (0 users already running)...
+[2025-06-05 00:18:31,987] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.runners: All users hatched: SocialMediaUser: 8 (0 already running)
+[2025-06-05 00:21:36,439] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:24:43,393] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:25:17,571] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:26:14,734] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:27:18,521] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:27:51,859] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:28:17,229] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:29:10,569] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:32:06,812] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:32:25,216] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:33:14,702] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:33:32,459] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:34:11,426] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:35:03,485] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/WARNING/root: compose_post resp.status = 400, text=Incomplete arguments
+
+[2025-06-05 00:40:24,463] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.main: Time limit reached. Stopping Locust.
+[2025-06-05 00:40:24,466] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.main: Shutting down (exit code 1), bye.
+[2025-06-05 00:40:24,466] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.main: Cleaning up runner...
+[2025-06-05 00:40:24,466] node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us/INFO/locust.main: Running teardowns...

@@ -463,7 +463,7 @@ services:
     deploy:
       mode: replicated
       # endpoint_mode: dnsrr
-      replicas: 16
+      replicas: 8
       placement:
         max_replicas_per_node: 8
         # constraints:
