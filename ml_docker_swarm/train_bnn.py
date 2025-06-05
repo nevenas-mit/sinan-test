@@ -1,3 +1,5 @@
+# Python script to train a Bayesian Neural Network
+
 import argparse
 import logging
 import numpy as np
