@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import torch
 import os
+import time
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
 import pyro
@@ -233,9 +234,10 @@ def main(args):
             true_output_np = scaler_y.inverse_transform(true_output.cpu().numpy().reshape(1, -1)).flatten()
 
             # Number of forward passes to estimate uncertainty
-            M = 50
+            M = 100
             predictions = []
 
+            t1 = time.time()
             for _ in range(M):
                 pred = bnn.forward(input_sample, sample=True).squeeze(0)
                 predictions.append(pred.cpu().numpy())
@@ -251,12 +253,14 @@ def main(args):
             std_pred_real = std_pred * scaler_y.scale_
 
             relative_uncertainty = (std_pred_real / mean_pred_real) * 100
+            t2 = time.time()
 
             print(f"Sample {i+1}:")
             print(f"  Mean Prediction : {mean_pred_real}")
             print(f"  Std Dev: {std_pred_real}")
             print(f"  Uncertainty: {relative_uncertainty}")
             print(f"  Ground Truth: {true_output_np}")
+            print(f"  Inference Time: {((t2-t1)*1000):.2f} ms")
             print()
 
 if __name__ == "__main__":
