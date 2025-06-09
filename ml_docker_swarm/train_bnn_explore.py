@@ -183,7 +183,6 @@ def main(args):
     print(f"\nFinal Train RMSE: {evaluate_rmse(bnn, train_loader):.4f}")
     print(f"Final Valid RMSE: {evaluate_rmse(bnn, valid_loader):.4f}")
 
-    '''
     # === Save plot and model with hyperparameter info ===
     model_dir = "model"
     os.makedirs(model_dir, exist_ok=True)
@@ -205,7 +204,6 @@ def main(args):
 
     torch.save(bnn.state_dict(), model_path)
     print(f"Model saved to {model_path}")
-    '''
 
     # === Inspect predictions vs. ground truth ===
     print("\nSample Predictions on Validation Set:")
@@ -218,14 +216,46 @@ def main(args):
             input_sample = x_valid_tensor[i].unsqueeze(0)  # shape: (1, input_dim)
             true_output = y_valid_tensor[i]                # shape: (output_dim,)
 
+            
+            '''
             pred_output = bnn.forward(input_sample, sample=False).squeeze(0)  # shape: (output_dim,)
 
             # Optional: inverse transform to get real-world scale
-            true_output_np = scaler_y.inverse_transform(true_output.cpu().numpy().reshape(1, -1)).flatten()
+            
             pred_output_np = scaler_y.inverse_transform(pred_output.cpu().numpy().reshape(1, -1)).flatten()
 
             print(f"Sample {i+1}:")
             print(f"  Prediction : {pred_output_np}")
+            print(f"  Ground Truth: {true_output_np}")
+            print()
+            '''
+
+            true_output_np = scaler_y.inverse_transform(true_output.cpu().numpy().reshape(1, -1)).flatten()
+
+            # Number of forward passes to estimate uncertainty
+            M = 50
+            predictions = []
+
+            for _ in range(M):
+                pred = bnn.forward(input_sample, sample=True).squeeze(0)
+                predictions.append(pred.cpu().numpy())
+
+            predictions = np.stack(predictions)  # shape: (M, output_dim)
+
+            # Mean prediction
+            mean_pred = np.mean(predictions, axis=0)
+            # Uncertainty (e.g., standard deviation)
+            std_pred = np.std(predictions, axis=0)
+
+            mean_pred_real = scaler_y.inverse_transform(mean_pred.reshape(1, -1)).flatten()
+            std_pred_real = std_pred * scaler_y.scale_
+
+            relative_uncertainty = (std_pred_real / mean_pred_real) * 100
+
+            print(f"Sample {i+1}:")
+            print(f"  Mean Prediction : {mean_pred_real}")
+            print(f"  Std Dev: {std_pred_real}")
+            print(f"  Uncertainty: {relative_uncertainty}")
             print(f"  Ground Truth: {true_output_np}")
             print()
 
