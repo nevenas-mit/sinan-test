@@ -211,26 +211,15 @@ def main(args):
     print("\nSample Predictions on Validation Set:")
 
     # Use first N examples from validation set
-    N = 5  # or 10 if you want more
+    N = 1000  # or 10 if you want more
     bnn.eval()
+    all_ps = []
+    all_corr = []
+
     with torch.no_grad():
         for i in range(N):
             input_sample = x_valid_tensor[i].unsqueeze(0)  # shape: (1, input_dim)
             true_output = y_valid_tensor[i]                # shape: (output_dim,)
-
-            
-            '''
-            pred_output = bnn.forward(input_sample, sample=False).squeeze(0)  # shape: (output_dim,)
-
-            # Optional: inverse transform to get real-world scale
-            
-            pred_output_np = scaler_y.inverse_transform(pred_output.cpu().numpy().reshape(1, -1)).flatten()
-
-            print(f"Sample {i+1}:")
-            print(f"  Prediction : {pred_output_np}")
-            print(f"  Ground Truth: {true_output_np}")
-            print()
-            '''
 
             true_output_np = scaler_y.inverse_transform(true_output.cpu().numpy().reshape(1, -1)).flatten()
 
@@ -269,6 +258,9 @@ def main(args):
             # Correlation between uncertainty and relative error
             corr_rel, p_val_rel = pearsonr(relative_uncertainty, rel_error)
 
+            all_ps.append(p_val_rel)
+            all_corr.append(corr_rel)
+
             print(f"Pearson Correlation (Uncertainty vs Absolute Error): {corr_abs:.3f} (p={p_val_abs:.3g})")
             print(f"Pearson Correlation (Uncertainty vs Relative Error): {corr_rel:.3f} (p={p_val_rel:.3g})")
 
@@ -279,6 +271,8 @@ def main(args):
             print(f"  Ground Truth: {true_output_np}")
             print(f"  Inference Time: {((t2-t1)*1000):.2f} ms")
             print()
+    
+    print(f"Average Pearson Correlation: {(sum(all_corr)/len(all_corr)):.2f} (p={(sum(all_ps)/len(all_ps)):.2f})")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
