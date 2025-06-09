@@ -5,6 +5,7 @@ import torch
 import os
 import time
 import matplotlib.pyplot as plt
+from scipy.stats import pearsonr
 from torch.utils.data import DataLoader, TensorDataset
 import pyro
 import pyro.distributions as dist
@@ -254,6 +255,22 @@ def main(args):
 
             relative_uncertainty = (std_pred_real / mean_pred_real) * 100
             t2 = time.time()
+
+            # Calculate absolute error
+            abs_error = np.abs(mean_pred_real - true_output_np)
+
+            # Calculate relative error in percentage (avoid div by zero)
+            epsilon = 1e-8
+            rel_error = abs_error / (np.abs(true_output_np) + epsilon) * 100
+
+            # Correlation between uncertainty and absolute error
+            corr_abs, p_val_abs = pearsonr(relative_uncertainty, abs_error)
+
+            # Correlation between uncertainty and relative error
+            corr_rel, p_val_rel = pearsonr(relative_uncertainty, rel_error)
+
+            print(f"Pearson Correlation (Uncertainty vs Absolute Error): {corr_abs:.3f} (p={p_val_abs:.3g})")
+            print(f"Pearson Correlation (Uncertainty vs Relative Error): {corr_rel:.3f} (p={p_val_rel:.3g})")
 
             print(f"Sample {i+1}:")
             print(f"  Mean Prediction : {mean_pred_real}")
