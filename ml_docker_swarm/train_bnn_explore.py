@@ -12,6 +12,7 @@ import pyro.distributions as dist
 from pyro.infer import SVI, Trace_ELBO
 from pyro.optim import ClippedAdam
 from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
 
 torch.manual_seed(2333)
 np.random.seed(2333)
@@ -135,7 +136,23 @@ def main(args):
     x_train = np.concatenate([sys_data_t, lat_data_t, nxt_data_t], axis=1)
     y_train = label_t
 
-    x_train_tensor = torch.tensor(x_train, dtype=torch.float32).to(device)
+    # === Select top 100 most important features using RandomForest ===
+    print("Fitting RandomForest to compute feature importances...")
+
+    # Fit a quick RandomForest (can tune n_estimators if needed)
+    rf = RandomForestRegressor(n_estimators=50, random_state=2333, n_jobs=-1)
+    rf.fit(x_train, y_train)
+
+    # Get importances and top 100 indices
+    importances = rf.feature_importances_
+    top_indices = np.argsort(importances)[-100:]
+
+    print(f"Top 100 feature indices: {top_indices}")
+
+    # Keep only the selected top features
+    x_train_selected = x_train[:, top_indices]
+
+    x_train_tensor = torch.tensor(x_train_selected, dtype=torch.float32).to(device)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).to(device)
 
     train_loader = DataLoader(TensorDataset(x_train_tensor, y_train_tensor), batch_size=args.batch_size, shuffle=True)
@@ -154,7 +171,9 @@ def main(args):
     x_valid = np.concatenate([sys_data_v, lat_data_v, nxt_data_v], axis=1)
     y_valid = label_v
 
-    x_valid_tensor = torch.tensor(x_valid, dtype=torch.float32).to(device)
+    x_valid_selected = x_valid[:, top_indices]
+
+    x_valid_tensor = torch.tensor(x_valid_selected, dtype=torch.float32).to(device)
     y_valid_tensor = torch.tensor(y_valid, dtype=torch.float32).to(device)
 
     valid_loader = DataLoader(TensorDataset(x_valid_tensor, y_valid_tensor), batch_size=args.batch_size)
@@ -211,7 +230,7 @@ def main(args):
     print("\nSample Predictions on Validation Set:")
 
     # Use first N examples from validation set
-    N = 1000  # or 10 if you want more
+    N = 10  # or 10 if you want more
     bnn.eval()
     all_ps = []
     all_corr = []

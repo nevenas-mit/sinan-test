@@ -1,12 +1,14 @@
 import subprocess
 import itertools
 import os
+import matplotlib.pyplot as plt
+import pandas as pd
 import re
 
 # === Define hyperparameter search space ===
-LEARNING_RATES = [1e-4, 1e-3, 1e-2]
-HIDDEN_DIMS = [100, 200, 400, 800]
-NUM_LAYERS = [1, 2, 4, 8]
+LEARNING_RATES = [5e-5, 1e-4, 2e-4, 5e-4, 1e-3]
+HIDDEN_DIMS = [100, 200, 300, 400, 500, 600, 700, 800]
+NUM_LAYERS = [1, 2, 3, 4, 5, 6, 7, 8]
 BATCH_SIZES = [1024]
 EPOCHS = 30
 
@@ -54,3 +56,38 @@ if results:
     print(f"Validation RMSE: {best_rmse:.4f}")
 else:
     print("No successful runs.")
+
+if results:
+    # Unpack results
+    configs, rmses = zip(*results)
+    labels = [f"lr={c[0]}\nhdim={c[1]}\nnlayer={c[2]}" for c in configs]
+
+    # === Save to CSV ===
+    df_results = pd.DataFrame({
+        'learning_rate': [c[0] for c in configs],
+        'hidden_dim': [c[1] for c in configs],
+        'num_layers': [c[2] for c in configs],
+        'batch_size': [c[3] for c in configs],
+        'validation_rmse': rmses
+    })
+    df_results.to_csv('grid_search_results_top100.csv', index=False)
+    print("Results saved to grid_search_results_top100.csv")
+
+    plt.figure(figsize=(12, 6))
+    plt.scatter(range(len(rmses)), rmses, color='blue')
+
+    plt.xticks(range(len(rmses)), labels, rotation=45, ha='right', fontsize=8)
+    plt.ylabel("Validation RMSE")
+    plt.xlabel("Hyperparameter Config")
+    plt.title("Hyperparameter Search: Validation RMSE per Config")
+    plt.ylim(top=1.0)
+    plt.tight_layout()
+    plt.grid(True)
+
+    plt.savefig("grid_search_rmse_plot_top100.png")
+    plt.show()
+
+    print("Plot saved to grid_search_rmse_plot_top100.png")
+else:
+    print("No successful runs.")
+
