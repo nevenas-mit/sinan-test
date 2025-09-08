@@ -493,6 +493,77 @@ def tune_xgb_threshold(rps):
 		XgbScaleDownThreshold = 0.075
 		XgbScaleUpThreshold = 0.175
 
+def is_uncertain_prediction(p):
+	# ML returns [-1, -1] when its uncertainty is high
+	return isinstance(p, (list, tuple)) and len(p) == 2 and p[0] == -1 and p[1] == -1
+
+def last_tail_latency():
+	# Use last observed p99 latency as "tail" in fallback
+	global StateLog
+	if len(StateLog) == 0:
+		return 0
+	feat = StateLog[-1].feature
+	return feat.end_to_end_lat.get('99.0', 0)
+
+def propose_action_fallback():
+	"""
+	Simple, robust util-based scaler used when ML is uncertain for all proposals.
+	Rules:
+	- If p99 > QoS OR any service util > MaxCpuUtil: scale up *only* hot services.
+	- Else, gently scale down services with very low util.
+	"""
+	global ServiceConfig, EndToEndQos, MaxCpuUtil, ScaleInRatio
+
+	action = Action()
+	tail = last_tail_latency()
+
+	# First pass: decide if we need to scale up
+	scale_up_needed = (tail > EndToEndQos)
+	hot_services = []
+
+	for s in ServiceConfig:
+		util = get_cpu_util(s)
+		if util > MaxCpuUtil:
+			scale_up_needed = True
+			hot_services.append(s)
+
+	# Build next CPU map
+	for s in ServiceConfig:
+		cur = ServiceConfig[s]['cpus']
+		maxc = ServiceConfig[s]['max_cpus']
+
+		if scale_up_needed:
+			if s in hot_services:
+				# Ensure at least the min safe cpus and nudge up (+0.2) capped by max
+				min_safe = get_min_cpus(cur, get_cpu_util(s), maxc)
+				nudged = max(cur + 0.2, min_safe)
+				nxt = min(math.ceil(nudged), maxc)
+			else:
+				nxt = cur  # hold for non-hot services
+		else:
+			# Try gentle scale down on cold services
+			util = get_cpu_util(s)
+			if util < ScaleInRatio and cur > 0.8:
+				# Divide a little while respecting min safe cpus
+				min_safe = get_min_cpus(cur, util, maxc)
+				nxt = max(get_divided_cpus(cur), min_safe)
+				# Keep one decimal precision like the rest of the code
+				nxt = ceil_float(nxt, 1)
+			else:
+				nxt = cur
+
+		action.cpu[s] = nxt
+		action.core[s] = math.ceil(nxt)
+
+		if nxt > cur:
+			action.beneficiary_service.append(s)
+		elif nxt < cur:
+			action.victim_service.append(s)
+			
+	action.pred_lat = -1
+	action.pred_viol = -1
+	return action
+
 def propose_action(rps_fluct):
 	global ServiceConfig
 	global OperationConfig
@@ -802,113 +873,113 @@ def propose_action(rps_fluct):
 	prediction = get_ml_prediction(info=info, gpu_sock=GpuSock)
 	logging.info(str(prediction))
 
-	scale_up_pred = []
-	scale_down_pred = []
+valid_index = set(i for i, p in enumerate(prediction) if not is_uncertain_prediction(p))
 
-	all_down_pred = []
-	for k in scale_down_index:
-		all_down_pred.append([k, prediction[k], next_info[k]])
-	logging.info('all_down_pred ' + str(all_down_pred))
+# If *all* proposals are uncertain => fall back to util-based rule
+if len(valid_index) == 0:
+	logging.warning('All ML proposals uncertain; using utilization-based fallback.')
+	return propose_action_fallback()
 
-	assert len(prediction) == len(next_info)
+# Helper: keep only valid indices for each bucket
+scale_down_valid = [i for i in scale_down_index if i in valid_index]
+scale_up_valid   = [i for i in scale_up_index   if i in valid_index]
+hold_valid       = hold_index if hold_index in valid_index else None
+max_valid        = max_index  if max_index  in valid_index else None
 
-	action = Action()
-	scale_down_doable = True
-	# check if scale down is acceptable
+# Keep original Action creation
+action = Action()
+scale_down_doable = True
+
+# ---------- Try scale down first (among valid only) ----------
+least_core = -1
+least_index = -1
+least_lat = -1
+
+for index in scale_down_valid:
+	p_lat, p_viol = prediction[index]
+	if p_lat < EndToEndQos - CnnValidError and p_viol <= XgbScaleDownThreshold:
+		total_core = 0
+		for service in ServiceConfig:
+			total_core += next_info[index][service]['cpus']
+		if least_core < 0 or least_core > total_core or (least_core == total_core and least_lat > p_lat):
+			least_core = total_core
+			least_index = index
+			least_lat = p_lat
+
+if least_index < 0 or abs(rps_fluct) >= 0.02:
+	logging.info('scale down not acceptable (or rps fluct high)')
+	scale_down_doable = False
+else:
+	logging.info('scale down acceptable')
+	action.pred_lat, action.pred_viol = prediction[least_index]
+	for service in ServiceConfig:
+		ncpus = next_info[least_index][service]['cpus']
+		action.cpu[service] = ncpus
+		action.core[service] = math.ceil(ncpus)
+		if ncpus > ServiceConfig[service]['cpus']:
+			action.beneficiary_service.append(service)
+		elif ncpus < ServiceConfig[service]['cpus']:
+			action.victim_service.append(service)
+	# return early via final return at end of function
+
+# ---------- If we didn't scale down, try hold (only if valid & safe) ----------
+if not scale_down_doable and hold_valid is not None:
+	p_lat, p_viol = prediction[hold_valid]
+	if p_lat < EndToEndQos - CnnValidError and p_viol < XgbScaleUpThreshold:
+		logging.info('hold acceptable')
+		action.pred_lat, action.pred_viol = p_lat, p_viol
+		for service in ServiceConfig:
+			cur = ServiceConfig[service]['cpus']
+			action.cpu[service] = cur
+			action.core[service] = math.ceil(cur)
+		return action  # holding is decided; exit early
+
+# ---------- Otherwise, try scale up (among valid only) ----------
+if not scale_down_doable:
+	logging.info('scale up needed')
 	least_core = -1
 	least_index = -1
 	least_lat = -1
-	for index in scale_down_index:
-		if prediction[index][0] < EndToEndQos - CnnValidError and \
-			prediction[index][1] <= XgbScaleDownThreshold:
+	for index in scale_up_valid:
+		p_lat, p_viol = prediction[index]
+		if p_lat < EndToEndQos - CnnValidError and p_viol < XgbScaleUpThreshold:
 			total_core = 0
 			for service in ServiceConfig:
 				total_core += next_info[index][service]['cpus']
-			if least_core < 0 or least_core > total_core or \
-				(least_core == total_core and least_lat > prediction[index][0]):
+			if least_core < 0 or least_core > total_core or (least_core == total_core and least_lat > p_lat):
 				least_core = total_core
 				least_index = index
-				least_lat = prediction[index][0]
-				scale_down_pred.append(prediction[index])
+				least_lat = p_lat
 
-	# if least_index < 0 or PrevScaleDown or abs(rps_fluct) >= 0.02:
-	if least_index < 0 or abs(rps_fluct) >= 0.02:
-	# if least_index < 0:
-		# # no scale down satisfies and we just hold
-		# for service in ServiceConfig:
-		# 	action.pred_lat  = prediction[hold_index][0]
-		# 	action.pred_viol = prediction[hold_index][1]
-		# 	action.cpu[service] = ServiceConfig[service]['cpus']
-		# 	action.core[service] = math.ceil(ServiceConfig[service]['cpus'])
-		PrevScaleDown = False
-		logging.info('scale down not acceptable')
-		scale_down_doable = False
-	else:
-		PrevScaleDown = True
-		assert least_index != 0 # 0 is hold
-		logging.info('scale_down acceptable')
-		action.pred_lat  = prediction[least_index][0]
-		action.pred_viol = prediction[least_index][1]
-		for service in ServiceConfig:
-			action.cpu[service] = next_info[least_index][service]['cpus']
-			action.core[service] = math.ceil(next_info[least_index][service]['cpus'])
-			if next_info[least_index][service]['cpus'] > ServiceConfig[service]['cpus']:
-				action.beneficiary_service.append(service)
-			elif next_info[least_index][service]['cpus'] < ServiceConfig[service]['cpus']:
-				action.victim_service.append(service)
-
-	if not scale_down_doable and prediction[hold_index][0] < EndToEndQos - CnnValidError \
-		and prediction[hold_index][1] < XgbScaleUpThreshold:
-		PrevScaleDown = False
-		# safe to hold current resource
-		logging.info('hold acceptable')
-		action.pred_lat  = prediction[hold_index][0]
-		action.pred_viol = prediction[hold_index][1]
-		for service in ServiceConfig:
-			action.cpu[service] = ServiceConfig[service]['cpus']
-			action.core[service] = math.ceil(ServiceConfig[service]['cpus'])
-
-	elif not scale_down_doable:
-		PrevScaleDown = False
-		# scale up needed
-		logging.info('scale up needed')
-		least_core = -1
-		least_index = -1
-		least_lat = -1
-		for index in scale_up_index:
-			if prediction[index][0] < EndToEndQos - CnnValidError and \
-				prediction[index][1] < XgbScaleUpThreshold:
-				total_core = 0
-				for service in ServiceConfig:
-					total_core += next_info[index][service]['cpus']
-				if least_core < 0 or least_core > total_core or \
-					(least_core == total_core and least_lat > prediction[index][0]):
-					least_core = total_core
-					least_index = index
-					least_lat = prediction[index][0]
-		if least_index < 0:
-			# no scale up satisfies and we maxmize rsc
+	if least_index < 0:
+		# If no valid safe scale-up, but we have a valid "maximize all", use it;
+		# otherwise fallback to util-based rule.
+		if max_valid is not None:
+			logging.info('No safe scale-up; maximizing resources (valid max).')
+			action.pred_lat, action.pred_viol = prediction[max_valid]
 			for service in ServiceConfig:
-				action.pred_lat  = prediction[max_index][0]
-				action.pred_viol = prediction[max_index][1]
-				action.cpu[service] = ServiceConfig[service]['max_cpus']
-				action.core[service] = math.ceil(ServiceConfig[service]['max_cpus'])
-				if action.cpu[service] > ServiceConfig[service]['cpus']:
+				ncpus = ServiceConfig[service]['max_cpus']
+				action.cpu[service] = ncpus
+				action.core[service] = math.ceil(ncpus)
+				if ncpus > ServiceConfig[service]['cpus']:
 					action.beneficiary_service.append(service)
+			return action
 		else:
-			assert least_index != 0 # 0 is hold
-			action.pred_lat  = prediction[least_index][0]
-			action.pred_viol = prediction[least_index][1]
-			for service in ServiceConfig:
-				action.cpu[service] = next_info[least_index][service]['cpus']
-				action.core[service] = math.ceil(next_info[least_index][service]['cpus'])
-				if next_info[least_index][service]['cpus'] > ServiceConfig[service]['cpus']:
-					action.beneficiary_service.append(service)
-				elif next_info[least_index][service]['cpus'] < ServiceConfig[service]['cpus']:
-					action.victim_service.append(service)
+			logging.warning('No valid scale-up proposals; using utilization-based fallback.')
+			return propose_action_fallback()
+	else:
+		action.pred_lat, action.pred_viol = prediction[least_index]
+		for service in ServiceConfig:
+			ncpus = next_info[least_index][service]['cpus']
+			action.cpu[service] = ncpus
+			action.core[service] = math.ceil(ncpus)
+			if ncpus > ServiceConfig[service]['cpus']:
+				action.beneficiary_service.append(service)
+			elif ncpus < ServiceConfig[service]['cpus']:
+				action.victim_service.append(service)
+		return action
 
-	logging.info('scale_down_doable: ' + str(scale_down_pred))
-	return action
+return action
 
 def get_cpu_util(service):
 	global StateLog
