@@ -43,13 +43,21 @@ IP_ADDR = {}
 # IP_ADDR["node-0.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.1"
 # IP_ADDR["node-1.urja.ragger-pg0.wisc.cloudlab.us"]     = "10.0.1.2"
 
-IP_ADDR["node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.1"
-IP_ADDR["node1.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.2"
-IP_ADDR["node2.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.3"
-IP_ADDR["node3.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.4"
-IP_ADDR["node4.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.5"
-IP_ADDR["node5.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.6"
-IP_ADDR["node6.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.7"
+# IP_ADDR["node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.1"
+# IP_ADDR["node1.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.2"
+# IP_ADDR["node2.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.3"
+# IP_ADDR["node3.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.4"
+# IP_ADDR["node4.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.5"
+# IP_ADDR["node5.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.6"
+# IP_ADDR["node6.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.7"
+
+IP_ADDR["node0.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.1"
+IP_ADDR["node1.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.2"
+IP_ADDR["node2.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.3"
+IP_ADDR["node3.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.4"
+IP_ADDR["node4.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.5"
+IP_ADDR["node5.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.6"
+IP_ADDR["node6.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us"] = "10.10.1.7"
 
 service_config = {
     "nginx-thrift":         {'max_replica': 4},
@@ -115,12 +123,12 @@ for node in nodes:
     assert node in IP_ADDR
     node_config[node] = {}
     node_config[node]['ip_addr'] = IP_ADDR[node]
-    if node == 'node0.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us':
-        node_config[node]['cpus'] = 16
+    if node == 'node0.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us':
+        node_config[node]['cpus'] = 40
         node_config[node]['label'] = 'type=compute'
-    elif node == 'node1.nevenas-236518.hwswcodesign-pg0.utah.cloudlab.us':
-        node_config[node]['cpus'] = 16
-        node_config[node]['label'] = 'type=data'
+    elif node == 'node1.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us':
+        node_config[node]['cpus'] = 40
+        node_config[node]['label'] = 'type=compute'
     elif node == "node-0.urja.ragger-pg0.wisc.cloudlab.us":
         node_config[node]['cpus'] = 40
         node_config[node]['label'] = 'type=compute'
@@ -137,7 +145,7 @@ for node in nodes:
         node_config[node]['cpus'] = 32
         node_config[node]['label'] = 'type=compute'
     else:
-        node_config[node]['cpus'] = 32
+        node_config[node]['cpus'] = 40
         node_config[node]['label'] = 'type=data'
 
 cluster_config = {}
