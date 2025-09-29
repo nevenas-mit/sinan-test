@@ -1,42 +1,42 @@
 {
     "nodes": {
-        "node0.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us": {
-            "cpus": 32,
+        "node0.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us": {
+            "cpus": 40,
             "ip_addr": "10.10.1.1",
             "label": "type=compute"
         },
-        "node1.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us": {
-            "cpus": 32,
+        "node1.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us": {
+            "cpus": 40,
             "ip_addr": "10.10.1.2",
             "label": "type=compute"
         },
-        "node2.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us": {
-            "cpus": 32,
+        "node2.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us": {
+            "cpus": 40,
             "ip_addr": "10.10.1.3",
-            "label": "type=compute"
+            "label": "type=data"
         },
-        "node3.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us": {
-            "cpus": 32,
+        "node3.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us": {
+            "cpus": 40,
             "ip_addr": "10.10.1.4",
             "label": "type=data"
         },
-        "node4.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us": {
-            "cpus": 32,
+        "node4.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us": {
+            "cpus": 40,
             "ip_addr": "10.10.1.5",
             "label": "type=data"
         },
-        "node5.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us": {
-            "cpus": 32,
+        "node5.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us": {
+            "cpus": 40,
             "ip_addr": "10.10.1.6",
             "label": "type=data"
         },
-        "node6.nevenas-259343.hwswcodesign-pg0.wisc.cloudlab.us": {
-            "cpus": 32,
+        "node6.sinan-test.hwswcodesign-pg0.wisc.cloudlab.us": {
+            "cpus": 40,
             "ip_addr": "10.10.1.7",
             "label": "type=data"
         }
     },
-    "replica_cpus": 2,
+    "replica_cpus": 4,
     "scalable_service": [
         "nginx-thrift",
         "compose-post-service",
@@ -58,26 +58,26 @@
     ],
     "service": {
         "compose-post-redis": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "compose-post-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "home-timeline-redis": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "home-timeline-service": {
-            "cpus": 8,
-            "max_cpus": 8,
+            "cpus": 16,
+            "max_cpus": 16,
             "max_replica": 4,
             "replica": 4
         },
@@ -94,20 +94,20 @@
             "replica": 4
         },
         "nginx-thrift": {
-            "cpus": 8,
-            "max_cpus": 8,
+            "cpus": 16,
+            "max_cpus": 16,
             "max_replica": 4,
             "replica": 4
         },
         "post-storage-memcached": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "post-storage-mongodb": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
@@ -118,110 +118,110 @@
             "replica": 1
         },
         "social-graph-mongodb": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "social-graph-redis": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "social-graph-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "text-filter-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "text-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "unique-id-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "url-shorten-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "user-memcached": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "user-mention-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "user-mongodb": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "user-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "user-timeline-mongodb": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "user-timeline-redis": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "user-timeline-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "write-home-timeline-rabbitmq": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "write-home-timeline-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "write-user-timeline-rabbitmq": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         },
         "write-user-timeline-service": {
-            "cpus": 2,
-            "max_cpus": 2,
+            "cpus": 4,
+            "max_cpus": 4,
             "max_replica": 1,
             "replica": 1
         }

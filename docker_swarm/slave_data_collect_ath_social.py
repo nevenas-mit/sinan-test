@@ -97,9 +97,9 @@ def create_container_stats(service, container_name, container_id):
 def reset_container_id_pids():
     logging.info('reset_container_id_pids')
     clear_container_stats()
-    print("Done with clearing container stats")
+    # print("Done with clearing container stats")
     docker_ps()
-    print("Done with docker ps")
+    # print("Done with docker ps")
 
 def docker_ps():
     global Services
@@ -107,7 +107,7 @@ def docker_ps():
 
     texts = subprocess.check_output('docker ps', shell=True, stderr=sys.stderr).decode(
             'utf-8').splitlines()
-    print("Len text = ", len(texts))
+    # print("Len text = ", len(texts))
     for i in range(1, len(texts)):
         c_name = [s for s in texts[i].split(' ') if s][-1]
         if Stackname not in c_name:
@@ -128,11 +128,11 @@ def docker_ps():
             continue
 
         logging.info("docker ps container_name = %s, container_id = %s service = %s" %(c_name, c_id, service))
-        print("Now create container stats for service ", service)
+        # print("Now create container stats for service ", service)
         create_container_stats(service, c_name, c_id)
-        print("Stats created")
+        # print("Stats created")
         update_container_pids(c_name)
-        print("Updated pids!")
+        # print("Updated pids!")
 
 def get_container_id(container_name):
     cmd = "docker inspect --format=\"{{.Id}}\" " + container_name
@@ -144,10 +144,10 @@ def update_container_pids(container_name):
     global ContainerStats
     assert container_name in ContainerStats
     cmd = "docker inspect -f \"{{ .State.Pid }}\" " + ContainerStats[container_name]['id']
-    print("Cmd to update pids = ", cmd)
+    # print("Cmd to update pids = ", cmd)
     pid_strs = subprocess.check_output(cmd, shell=True, stderr=sys.stderr).decode(
         'utf-8').split('\n')
-    print(pid_strs)
+    # print(pid_strs)
     for pid_str in pid_strs:
         if pid_str != '':
             ContainerStats[container_name]['pids'].append(pid_str)
@@ -490,19 +490,19 @@ def init_data():
     global Services
     global ServiceConfig
     # reset container id pid every time, since we can't control placement with docker swarm
-    print("Start init data")
+    # print("Start init data")
     reset_container_id_pids()
-    print("Reset container id pids")
+    # print("Reset container id pids")
     
     # read initial values
     get_docker_cpu_usage()
-    print("Get cpu usage")
+    # print("Get cpu usage")
     get_memory_usage()
-    print("Get mem usage")
+    # print("Get mem usage")
     get_network_usage()
-    print("Get network usage")
+    # print("Get network usage")
     get_io_usage()
-    print("Get io usage")
+    # print("Get io usage")
 
 # cpu cycle limit
 def set_cpu_limit(cpu_config, quiet=False):
@@ -572,13 +572,13 @@ def start_experiment(host_sock):
 
     exp_succ = True
     while True:
-        print("Wait for the data")
+        # print("Wait for the data")
         data = host_sock.recv(1024).decode('utf-8')
         # print 'recv: ', data
         MsgBuffer += data
 
         if len(data) == 0:
-            print("Host_sock reset during experiment")
+            # print("Host_sock reset during experiment")
             # logging.error('host_sock reset during experiment')
             # continue
             terminate = True
@@ -587,7 +587,7 @@ def start_experiment(host_sock):
         while '\n' in MsgBuffer:
             (cmd, rest) = MsgBuffer.split('\n', 1)
             MsgBuffer = rest
-            print("CMD: ", cmd)
+            # print("CMD: ", cmd)
             logging.info('cmd: ' + cmd)
 
             if 'get_info' in cmd:
@@ -622,7 +622,7 @@ def start_experiment(host_sock):
                 host_sock.sendall(ret_msg.encode('utf-8'))
 
             elif 'set_rsc' in cmd:
-                print("Now set_rsc")
+                # print("Now set_rsc")
                 cpu_config = json.loads(cmd.split('----')[-1])
                 set_cpu_limit(cpu_config, quiet=True)
 
@@ -644,7 +644,7 @@ def start_experiment(host_sock):
                 terminate = True
 
         if terminate:
-            print("Need to terminate")
+            # print("Need to terminate")
             host_sock.sendall(('experiment_done\n').encode('utf-8'))
             return exp_succ
 
@@ -670,12 +670,12 @@ def main():
     MsgBuffer = ''
     terminate = False
     while True:
-        print("Wait for new messages")
+        # print("Wait for new messages")
         data = host_sock.recv(1024).decode('utf-8')
         if len(data) == 0:
             logging.warning('connection reset by host, exiting...')
             break
-        print("Received data = ", data)
+        # print("Received data = ", data)
         MsgBuffer += data
         while '\n' in MsgBuffer:
             (cmd, rest) = MsgBuffer.split('\n', 1)
@@ -683,11 +683,11 @@ def main():
             logging.info('cmd = ' + cmd)
 
             if 'init_data' in cmd:
-                print("Here is the init data command")
+                # print("Here is the init data command")
                 init_data()
-                print("Data init done")
+                # print("Data init done")
                 host_sock.sendall(('init_data_done\n').encode('utf-8'))
-                print("Response sent")
+                # print("Response sent")
             elif 'exp_start' in cmd:
                 assert '\n' not in rest
                 # docker_restart = (int(cmd.split(' ')[2]) == 1)

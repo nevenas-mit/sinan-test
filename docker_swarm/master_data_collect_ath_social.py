@@ -1259,6 +1259,7 @@ def main():
         users_dir = DataDir / ('users_' + str(users))
         print("Let's now run the experiment for user ", users)
         service_fail = run_exp(users=users, log_dir=users_dir)
+        print("Experiment done for user", users)
         if not service_fail:
             i += 1
         time.sleep(20)
