@@ -606,8 +606,6 @@ services:
       - ./nginx-web-server/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./nginx-web-server/jaeger-config.json:/usr/local/openresty/nginx/jaeger-config.json
       - ./gen-lua:/gen-lua
-    depends_on:
-      - jaeger
     deploy:
       mode: replicated
       # endpoint_mode: dnsrr
@@ -617,6 +615,7 @@ services:
         constraints:
           - node.labels.type == compute
     depends_on:
+      - jaeger
       - user-service
       - user-mention-service
       - media-service
