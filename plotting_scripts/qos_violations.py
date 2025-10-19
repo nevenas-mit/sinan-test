@@ -9,11 +9,11 @@ time_minutes = epochs * 2  # each epoch = 2 minutes
 data = {
     "AutoScaleOpt": [0, 0, 0, 10, 14, 22, 30, 35, 38],
     "AutoScaleCons": [0, 0, 0, 0, 1, 2, 1, 1, 1],
-    "CNN+XGBoost": [0, 0, 0, 5, 7, 13, 14, 19, 22],
+    "Sinan": [0, 0, 0, 5, 7, 13, 14, 19, 22],
     "CNN+XGBoost+EucDist": [0, 0, 0, 3, 5, 10, 13, 16, 15],
     "CNN+XGBoost+CP": [0, 0, 0, 3, 4, 7, 8, 8, 11],
     "BNN": [0, 0, 0, 1, 2, 3, 3, 5, 6],
-    "BNN+CP": [0, 0, 0, 1, 2, 2, 3, 3, 2]
+    # "BNN+CP": [0, 0, 0, 1, 2, 2, 3, 3, 2]
 }
 
 # Define custom line styles and markers
@@ -24,7 +24,7 @@ styles = {
     "CNN+XGBoost+EucDist": {"linestyle": "-.", "marker": "x"},
     "CNN+XGBoost+CP": {"linestyle": "-", "marker": "o"},
     "BNN": {"linestyle": "-", "marker": "^"},
-    "BNN+CP": {"linestyle": ":", "marker": "p"}
+    # "BNN+CP": {"linestyle": ":", "marker": "p"}
 }
 
 # Plot

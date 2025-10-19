@@ -13,17 +13,18 @@ data = {'AutoScaleOpt': [45.5, 53.375, 60.375, 61.25, 63.875, 65.625, 67.375, 71
         'CNN+XGBoost+EucDist': [35.875, 42.0, 40.25, 50.75, 56.0, 57.75, 64.75, 68.25, 68.25], 
         'CNN+XGBoost+CP': [32.375, 40.25, 49.875, 51.625, 53.375, 53.375, 57.75, 60.375, 63.0], 
         'BNN': [33.25, 42.875, 50.75, 52.5, 54.25, 54.25, 60.375, 63.0, 66.5], 
-        'BNN+CP': [32.375, 41.125, 49.0, 50.75, 53.375, 53.375, 56.875, 59.5, 63.0]}
+        # 'BNN+CP': [32.375, 41.125, 49.0, 50.75, 53.375, 53.375, 56.875, 59.5, 63.0]
+        }
 
 # Define custom line styles and markers
 styles = {
     "AutoScaleOpt": {"linestyle": "--", "marker": "s"},
     "AutoScaleCons": {"linestyle": ":", "marker": "o"},
-    "CNN+XGBoost": {"linestyle": "-", "marker": "D"},
+    "Sinan": {"linestyle": "-", "marker": "D"},
     "CNN+XGBoost+EucDist": {"linestyle": "-.", "marker": "x"},
     "CNN+XGBoost+CP": {"linestyle": "-", "marker": "o"},
     "BNN": {"linestyle": "-", "marker": "^"},
-    "BNN+CP": {"linestyle": ":", "marker": "p"}
+    # "BNN+CP": {"linestyle": ":", "marker": "p"}
 }
 
 # Plot
