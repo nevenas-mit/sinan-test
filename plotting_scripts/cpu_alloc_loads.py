@@ -14,18 +14,18 @@ data = {
     "CNN+XGBoost+EucDist": [42, 42, 49, 52, 65, 43, 48, 54, 68],
     "CNN+XGBoost+CP":      [38, 38, 47, 54, 61, 40, 47, 56, 63],
     "BNN":                 [38, 38, 49, 53, 62, 39, 51, 55, 64],
-    "BNN+CP":              [37, 37, 46, 53, 61, 38, 48, 56, 60]
+    # "BNN+CP":              [37, 37, 46, 53, 61, 38, 48, 56, 60]
 }
 
 # Define custom line styles and markers
 styles = {
     "AutoScaleOpt": {"linestyle": "--", "marker": "s"},
     "AutoScaleCons": {"linestyle": ":", "marker": "o"},
-    "CNN+XGBoost": {"linestyle": "-", "marker": "D"},
+    "Sinan": {"linestyle": "-", "marker": "D"},
     "CNN+XGBoost+EucDist": {"linestyle": "-.", "marker": "x"},
     "CNN+XGBoost+CP": {"linestyle": "-", "marker": "o"},
     "BNN": {"linestyle": "-", "marker": "^"},
-    "BNN+CP": {"linestyle": ":", "marker": "p"}
+    # "BNN+CP": {"linestyle": ":", "marker": "p"}
 }
 
 # Plot
