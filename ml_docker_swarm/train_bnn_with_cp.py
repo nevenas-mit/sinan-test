@@ -294,6 +294,13 @@ def main(args):
         M=args.mc_cal, alpha=args.cp_alpha,
         mode=args.cp_mode, per_output=bool(args.cp_per_output)
     )
+
+    print("\n===== Conformal Calibration Summary =====")
+    print(f"Mode: {cp_stats['mode']}")
+    print(f"Per-output: {cp_stats['per_output']}")
+    print(f"Computed q-value(s): {cp_stats['q']}")
+    print("=========================================\n")
+
     cp_path = os.path.join(model_dir, f"{model_name}_cp_stats.pkl")
     joblib.dump(
         {
@@ -307,6 +314,9 @@ def main(args):
         cp_path
     )
     print(f"CP stats saved to {cp_path}")
+
+    print(f"Calibration samples: {n_cal} out of {n_valid} validation samples.")
+
 
     print("\nDone.")
 

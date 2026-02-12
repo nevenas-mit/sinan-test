@@ -14,6 +14,8 @@ from pyro.optim import ClippedAdam
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 
+t_start = time.time()
+
 torch.manual_seed(2333)
 np.random.seed(2333)
 pyro.set_rng_seed(2333)
@@ -204,6 +206,95 @@ def main(args):
     print(f"\nFinal Train RMSE: {evaluate_rmse(bnn, train_loader):.4f}")
     print(f"Final Valid RMSE: {evaluate_rmse(bnn, valid_loader):.4f}")
 
+    TOP_K_BAR = 20            # how many features to show in the bar chart
+    CUTOFF_K  = 100           # the selection cutoff you used
+
+    # ---------- after training loop, before saving plots/models ----------
+    model_dir = "model"
+    os.makedirs(model_dir, exist_ok=True)
+    model_name = f"bnn_layers{args.num_layers}_hdim{args.hidden_dim}_lr{args.lr:.0e}"
+
+    # === (1) ELBO Loss plot ===
+    loss_plot_path = os.path.join(model_dir, f"{model_name}_elbo_loss.png")
+    plt.figure(figsize=(7, 5))
+    plt.plot(losses, linewidth=4)
+    plt.title("ELBO Loss", fontsize=22)
+    plt.xlabel("Training Step", fontsize=20)
+    plt.ylabel("Loss", fontsize=20)
+    plt.grid(True)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.tight_layout()
+    plt.savefig(loss_plot_path)
+    print(f"Plot saved to {loss_plot_path}")
+
+    # === (2) Validation RMSE plot ===
+    rmse_plot_path = os.path.join(model_dir, f"{model_name}_val_rmse.png")
+    plt.figure(figsize=(7, 5))
+    plt.plot(val_rmses, linewidth=4)
+    plt.title("Validation RMSE", fontsize=22)
+    plt.xlabel("Training Step", fontsize=20)
+    plt.ylabel("RMSE", fontsize=20)
+    plt.grid(True)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+    plt.tight_layout()
+    plt.savefig(rmse_plot_path)
+    print(f"Plot saved to {rmse_plot_path}")
+
+    # === Prepare importance orderings for the next two plots ===
+    n_features = importances.shape[0]
+    order_desc = np.argsort(importances)[::-1]  # indices sorted by importance (desc)
+    sorted_imps = importances[order_desc]
+
+    # === (3) Top-K Feature Importances (bar chart) ===
+    top_k = min(TOP_K_BAR, n_features)
+    bar_plot_path = os.path.join(model_dir, f"{model_name}_feature_importance_top{top_k}.png")
+
+    plt.figure(figsize=(8, 6))
+    ypos = np.arange(top_k)
+    # Show most important at the top of the chart
+    top_idx_desc = order_desc[:top_k]
+    top_imps = importances[top_idx_desc]
+    plt.barh(ypos, top_imps, height=0.7)
+    # Label by feature index (since we don't have names)
+    plt.yticks(ypos, [f"f{idx}" for idx in top_idx_desc], fontsize=16)
+    plt.gca().invert_yaxis()  # highest at top
+    plt.xlabel("Importance", fontsize=20)
+    plt.title(f"Top {top_k} Feature Importances", fontsize=22)
+    plt.xticks(fontsize=20)
+    plt.grid(axis="x", linestyle="--", alpha=0.6)
+    plt.tight_layout()
+    plt.savefig(bar_plot_path)
+    print(f"Plot saved to {bar_plot_path}")
+
+    # === (4) Cumulative Importance curve with cutoff line at K=100 ===
+    cum_plot_path = os.path.join(model_dir, f"{model_name}_cumulative_importance.png")
+    cum = np.cumsum(sorted_imps)
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(np.arange(1, n_features + 1), cum, linewidth=4)
+    plt.title("Cumulative Feature Importance", fontsize=22)
+    plt.xlabel("Number of Features (sorted by importance)", fontsize=20)
+    plt.ylabel("Cumulative Importance", fontsize=20)
+    plt.grid(True)
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
+
+    # Vertical cutoff at CUTOFF_K (if available)
+    if n_features >= CUTOFF_K:
+        cutoff_val = cum[CUTOFF_K - 1]
+        plt.axvline(CUTOFF_K, linestyle="--")
+        plt.axhline(cutoff_val, linestyle="--")
+    else:
+        # If fewer than CUTOFF_K features exist, show a dashed line at n_features
+        cutoff_val = cum[-1]
+        plt.axvline(n_features, linestyle="--")
+
+    plt.tight_layout()
+    plt.savefig(cum_plot_path)
+    print(f"Plot saved to {cum_plot_path}")
+
     # === Save plot and model with hyperparameter info ===
     model_dir = "model"
     os.makedirs(model_dir, exist_ok=True)
@@ -214,17 +305,30 @@ def main(args):
 
     plt.figure(figsize=(12, 5))
     plt.subplot(1, 2, 1)
-    plt.plot(losses)
-    plt.title("ELBO Loss")
+    plt.plot(losses, linewidth=4)
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
+    plt.title("ELBO Loss", fontsize=18)
+    plt.xlabel("Training Step", fontsize=18)
+    plt.grid(True)
     plt.subplot(1, 2, 2)
-    plt.plot(val_rmses)
-    plt.title("Validation RMSE")
+    plt.plot(val_rmses, linewidth=4)
+    plt.title("Validation RMSE", fontsize=18)
+    plt.xlabel("Training Step", fontsize=18)
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
+    plt.grid(True)
     plt.tight_layout()
     plt.savefig(plot_path)
     print(f"Plot saved to {plot_path}")
 
     torch.save(bnn.state_dict(), model_path)
     print(f"Model saved to {model_path}")
+
+    np.save(os.path.join(model_dir, f"{model_name}_top_indices.npy"), top_indices)
+    import joblib
+    joblib.dump((scaler_x_sys, scaler_x_lat, scaler_x_nxt, scaler_y),
+                os.path.join(model_dir, f"{model_name}_scalers.pkl"))
 
     # === Inspect predictions vs. ground truth ===
     print("\nSample Predictions on Validation Set:")
@@ -305,5 +409,8 @@ if __name__ == "__main__":
     
 
     logging.basicConfig(level=logging.INFO)
+    t1 = time.time()
     main(args)
+    t2 = time.time()
+    print(f"\nTotal time: {(t2 - t1):.2f} seconds")
 
